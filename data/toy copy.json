@@ -1,0 +1,65 @@
+[
+  {
+    "_id": "t102",
+    "name": "Super Racer Car",
+    "imgUrl": "https://robohash.org/t102?set=set2",
+    "price": 89,
+    "labels": ["On wheels", "Outdoor", "Battery Powered"],
+    "createdAt": 1632031801011,
+    "inStock": true
+  },
+  {
+    "_id": "t103",
+    "name": "Magic Puzzle Box",
+    "imgUrl": "https://robohash.org/t103?set=set2",
+    "price": 45,
+    "labels": ["Puzzle", "Box game"],
+    "createdAt": 1633031801011,
+    "inStock": false
+  },
+  {
+    "_id": "t104",
+    "name": "Art Station Set",
+    "imgUrl": "https://robohash.org/t104?set=set2",
+    "price": 59,
+    "labels": ["Art", "Box game"],
+    "createdAt": 1634031801011,
+    "inStock": true
+  },
+  {
+    "_id": "t105",
+    "name": "Cute Baby Rattle",
+    "imgUrl": "https://robohash.org/t105?set=set2",
+    "price": 25,
+    "labels": ["Baby"],
+    "createdAt": 1635031801011,
+    "inStock": true
+  },
+  {
+    "_id": "t106",
+    "name": "Princess Dollhouse",
+    "imgUrl": "https://robohash.org/t106?set=set2",
+    "price": 150,
+    "labels": ["Doll", "Box game"],
+    "createdAt": 1636031801011,
+    "inStock": false
+  },
+  {
+    "_id": "t107",
+    "name": "Outdoor Adventure Kit",
+    "imgUrl": "https://robohash.org/t107?set=set2",
+    "price": 110,
+    "labels": ["Outdoor", "Art"],
+    "createdAt": 1637031801011,
+    "inStock": true
+  },
+  {
+    "_id": "t108",
+    "name": "Rolling Puzzle Train",
+    "imgUrl": "https://robohash.org/t108?set=set2",
+    "price": 99,
+    "labels": ["On wheels", "Puzzle", "Battery Powered"],
+    "createdAt": 1638031801011,
+    "inStock": true
+  }
+]
