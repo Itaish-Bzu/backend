@@ -2,6 +2,7 @@ import fs from 'fs'
 import { makeId, readJsonFile } from './util.service.js'
 
 const toys = readJsonFile('data/toy.json')
+const PAGE_SIZE = 4
 
 export const toyService = {
   query,
@@ -13,7 +14,7 @@ export const toyService = {
 function query(filterBy) {
   let toysToReturn = [...toys]
 
-  if(filterBy.txt) {
+  if (filterBy.txt) {
     const regExp = new RegExp(filterBy.txt, 'i')
     toysToReturn = toysToReturn.filter((toy) => regExp.test(toy.name))
   }
@@ -28,16 +29,22 @@ function query(filterBy) {
     )
   }
   if (filterBy.sort) {
-    toysToReturn .sort((toy1, toy2) => {
+    toysToReturn.sort((toy1, toy2) => {
       if (filterBy.sort === 'txt') {
         return toy1.name.localeCompare(toy2.name)
-      } else if (filterBy.sort === 'price' || filterBy.sort=== 'createAt') {
-        return (toy1[filterBy.sort] - toy2[filterBy.sort])
+      } else if (filterBy.sort === 'price' || filterBy.sort === 'createAt') {
+        return toy1[filterBy.sort] - toy2[filterBy.sort]
       }
     })
   }
 
-  return Promise.resolve(toysToReturn)
+  const maxPage = Math.ceil(toysToReturn.length / PAGE_SIZE)
+  if (filterBy.pageIdx !== undefined) {
+    const startIdx = filterBy.pageIdx * PAGE_SIZE
+    toysToReturn = toysToReturn.slice(startIdx, startIdx + PAGE_SIZE)
+  }
+
+  return Promise.resolve({toysToReturn,maxPage  })
 }
 
 function getById(toyId) {

@@ -27,6 +27,7 @@ app.get('/api/toy', (req, res) => {
     inStock: req.query.inStock || '',
     labels: req.query.labels || '',
     sort: req.query.sort || '',
+    pageIdx: req.query.pageIdx || undefined,
   }
   toyService
     .query(filterBy)
