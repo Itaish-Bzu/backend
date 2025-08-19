@@ -2,3 +2,4 @@ data/toy.copy.json
 data/toy.json
 backend.log
 node_modules
+.vscode
