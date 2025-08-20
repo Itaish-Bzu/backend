@@ -4,8 +4,6 @@ import { requireAdmin, requireAuth } from '../../middlewares/requireAuth.middlew
 
 export const toyRoutes = express.Router()
 
-
-
 toyRoutes.get('/', getToys)
 toyRoutes.get('/:id', getToyById)
 toyRoutes.post('/',requireAuth,  addToy)

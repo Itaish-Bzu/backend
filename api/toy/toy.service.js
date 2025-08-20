@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb'
 import { dbService } from '../../services/db.service.js'
 import { loggerService } from '../../services/logger.service.js'
 import { makeId } from '../../services/util.service.js'
+import { reviewService } from '../review/review.service.js'
 
 const PAGE_SIZE = 4
 
@@ -17,7 +18,7 @@ async function query(filterBy) {
   const { criteria, sort } = _buildCriteriaFromFilter(filterBy)
   try {
     const collection = await dbService.getCollection('toy')
-    const toys = await collection.find(criteria,{sort}).toArray()
+    const toys = await collection.find(criteria, { sort }).toArray()
     return toys
   } catch (error) {
     loggerService.error('Failed to get toys', err)
@@ -37,10 +38,17 @@ async function getById(toyId) {
     const toy = await collection.findOne({
       _id: ObjectId.createFromHexString(toyId),
     })
+
+    let reviews = await reviewService.query({ toyId: toyId }) ///
+    reviews = reviews.map((review) => {
+      delete review.toy
+      return review
+    })
+    toy.reviews = reviews     
     return toy
   } catch (error) {
-    loggerService.error('Failed to get toy', err)
-    throw err
+    loggerService.error('Failed to get toy', error)
+    throw error
   }
 }
 
@@ -52,7 +60,7 @@ async function add(toy) {
     await collection.insertOne(toy)
     return toy
   } catch (err) {
-    logger.error('cannot insert toy', err)
+    ~logger.error('cannot insert toy', err)
     throw err
   }
 }
@@ -114,5 +122,5 @@ function _buildCriteriaFromFilter(filterBy) {
     sort[filterBy.sort] = 1
   }
 
-  return { criteria, sort}
+  return { criteria, sort }
 }

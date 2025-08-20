@@ -28,10 +28,13 @@ app.set('query parser', 'extended')
 import { toyRoutes } from './api/toy/toy.routers.js'
 import { userRoutes } from './api/user/user.routes.js'
 import {authRoutes }from './api/auth/auth.routes.js'
+import { reviewRoutes } from './api/review/review.routers.js'
+
  
 app.use('/api/toy', toyRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/review', reviewRoutes)
 
 
 
