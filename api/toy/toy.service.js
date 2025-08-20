@@ -60,7 +60,7 @@ async function add(toy) {
     await collection.insertOne(toy)
     return toy
   } catch (err) {
-    ~logger.error('cannot insert toy', err)
+    loggerService.error('cannot insert toy', err)
     throw err
   }
 }
@@ -80,7 +80,7 @@ async function update(toy) {
     )
     return toy
   } catch (err) {
-    loggerService.error(`cannot update toy ${toy._id}`, err)
+    loggerService.err(`cannot update toy ${toy._id}`, err)
     throw err
   }
 }
@@ -93,7 +93,7 @@ async function remove(toyId) {
     })
     return deletedCount
   } catch (err) {
-    logger.error(`cannot remove toy ${toyId}`, err)
+    logger.err(`cannot remove toy ${toyId}`, err)
     throw err
   }
 
