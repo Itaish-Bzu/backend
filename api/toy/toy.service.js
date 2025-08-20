@@ -80,7 +80,7 @@ async function update(toy) {
     )
     return toy
   } catch (err) {
-    loggerService.err(`cannot update toy ${toy._id}`, err)
+    loggerService.error(`cannot update toy ${toy._id}`, err)
     throw err
   }
 }
@@ -93,7 +93,7 @@ async function remove(toyId) {
     })
     return deletedCount
   } catch (err) {
-    logger.err(`cannot remove toy ${toyId}`, err)
+    loggerService.error(`cannot remove toy ${toyId}`, err)
     throw err
   }
 
