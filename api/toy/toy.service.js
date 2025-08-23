@@ -4,7 +4,6 @@ import { loggerService } from '../../services/logger.service.js'
 import { makeId } from '../../services/util.service.js'
 import { reviewService } from '../review/review.service.js'
 
-const PAGE_SIZE = 4
 
 export const toyService = {
   query,
@@ -12,6 +11,7 @@ export const toyService = {
   remove,
   add,
   update,
+  addMsg,
 }
 
 async function query(filterBy) {
@@ -39,12 +39,13 @@ async function getById(toyId) {
       _id: ObjectId.createFromHexString(toyId),
     })
 
-    let reviews = await reviewService.query({ toyId: toyId }) ///
+    let reviews = await reviewService.query({ toyId: toyId })
     reviews = reviews.map((review) => {
       delete review.toy
       return review
     })
-    toy.reviews = reviews     
+    toy.reviews = reviews
+    
     return toy
   } catch (error) {
     loggerService.error('Failed to get toy', error)
@@ -54,7 +55,7 @@ async function getById(toyId) {
 
 async function add(toy) {
   toy.createAt = Date.now()
-  toy.imgUrl = `https://robohash.org/${makeId()}?set=set1"`
+  toy.imgUrl = toy.imgUrl || `https://robohash.org/${makeId()}?set=set1"`
   try {
     const collection = await dbService.getCollection('toy')
     await collection.insertOne(toy)
@@ -72,6 +73,7 @@ async function update(toy) {
       price: toy.price,
       labels: toy.labels,
       inStock: toy.inStock,
+      imgUrl:toy.imgUrl || `https://robohash.org/${makeId()}?set=set1"`
     }
     const collection = await dbService.getCollection('toy')
     await collection.updateOne(
@@ -96,11 +98,21 @@ async function remove(toyId) {
     loggerService.error(`cannot remove toy ${toyId}`, err)
     throw err
   }
+}
 
-  // const toyIdx = toys.findIndex((toy) => toy._id === toyId)
-  // if (toyIdx === -1) return Promise.reject('Cannot find toy - ' + toyId)
-  // toys.splice(toyIdx, 1)
-  // return _saveToysToFile()
+async function addMsg(toyId, msg) {
+  try {
+    msg.id = makeId()
+    const collection = await dbService.getCollection('toy')
+    await collection.updateOne(
+      { _id: ObjectId.createFromHexString(toyId) },
+      { $push: { msgs: msg } }
+    )
+    return msg
+  } catch (err) {
+    loggerService.error(`cannot add message to toy ${toyId}`, err)
+    throw err
+  }
 }
 
 function _buildCriteriaFromFilter(filterBy) {

@@ -1,7 +1,7 @@
-import log from 'cros/common/logger.js'
 import { dbService } from '../../services/db.service.js'
 import { ObjectId } from 'mongodb'
 import { loggerService } from '../../services/logger.service.js'
+import { asyncLocalStorage } from '../../services/als.service.js'
 
 export const reviewService = {
   query,
@@ -13,7 +13,8 @@ async function query(filterBy) {
   try {
     const filter = _buildCriteria(filterBy)
     const collection = await dbService.getCollection('review')
-    var reviews = await collection.aggregate([
+    var reviews = await collection
+      .aggregate([
         {
           $match: filter,
         },
@@ -68,16 +69,25 @@ async function add(review) {
     const collection = await dbService.getCollection('review')
     const newReview = await collection.insertOne(reviewToAdd)
     return newReview
-  } catch (error) {
+  } catch (err) {
     loggerService.error('cannot add review', err)
     throw err
   }
 }
 async function remove(reviewId) {
   try {
+    const { loggedinUser } = asyncLocalStorage.getStore()
+    const criteria = { _id: ObjectId.createFromHexString(reviewId) }
+
+    if (!loggedinUser.isAdmin) {
+      criteria.userId = ObjectId.createFromHexString(loggedinUser._id)
+      
+    }
     const collection = await dbService.getCollection('review')
-     const { deletedCount } = await collection.deleteOne({  _id: ObjectId.createFromHexString(reviewId)}) //protection!!!!
-    return deletedCount 
+    const { deletedCount } = await collection.deleteOne(criteria) 
+   
+    
+    return deletedCount
   } catch (err) {
     loggerService.error('cannot remove review', err)
     throw err

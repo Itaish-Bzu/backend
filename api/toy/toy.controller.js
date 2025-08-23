@@ -1,5 +1,6 @@
 import { toyService } from './toy.service.js'
 import { loggerService } from '../../services/logger.service.js'
+import { socketService } from '../../services/socket.service.js'
 
 export async function getToys(req, res) {
   try {
@@ -30,11 +31,8 @@ export async function getToyById(req, res) {
 }
 
 export async function addToy(req, res) {
-//   const { loggedinUser } = req
-
   try {
     const toy = req.body
-    // toy.owner = loggedinUser
     const addedToy = await toyService.add(toy)
     res.json(addedToy)
   } catch (err) {
@@ -44,9 +42,11 @@ export async function addToy(req, res) {
 }
 
 export async function updateToy(req, res) {
+  const{loggedinUser} = req
   try {
     const toy = { ...req.body, _id: req.params.id }
     const updatedToy = await toyService.update(toy)
+    socketService.broadcast({type: 'admin-change',data: `update${toy.name}`,  userId: loggedinUser._id,})
     res.json(updatedToy)
   } catch (err) {
     loggerService.error('Failed to update toy', err)
@@ -55,9 +55,11 @@ export async function updateToy(req, res) {
 }
 
 export async function removeToy(req, res) {
+  const{loggedinUser} = req  
   try {
     const toyId = req.params.id
     const deletedCount = await toyService.remove(toyId)
+    socketService.broadcast({type: 'admin-change',data: `remove toy`,  userId: loggedinUser._id,})    
     res.send(`${deletedCount} toys removed`)
   } catch (err) {
     loggerService.error('Failed to remove toy', err)
@@ -66,7 +68,7 @@ export async function removeToy(req, res) {
 }
 
 export async function addToyMsg(req, res) {
-  const { loggedinUser } = req
+  const { loggedinUser } = req  
   try {
     const toyId = req.params.id
     const msg = {
@@ -74,7 +76,9 @@ export async function addToyMsg(req, res) {
       by: loggedinUser,
       createdAt: Date.now(),
     }
-    const savedMsg = await toyService.addToyMsg(toyId, msg)
+    const savedMsg = await toyService.addMsg(toyId, msg)
+    socketService.broadcast({type: 'chat-add-msg',data:savedMsg,room:toyId,userId:loggedinUser._id} )
+    socketService.broadcast({type: 'typing-msg',data:{Typing:false, txt:''},room:toyId,userId:loggedinUser._id} )
     res.json(savedMsg)
   } catch (err) {
     loggerService.error('Failed to update toy', err)
